@@ -1,0 +1,13 @@
+<form [formGroup]="bookForm" (ngSubmit)="onSubmit()" >
+  <div class="mb-3">
+    <label for="exampleInputitle" class="form-label">Title</label>
+    <input type="title" class="form-control" id="title" aria-describedby="title" name="title" formControlName="title">
+    <span class="error-block" *ngIf="bookForm.controls['title'].invalid && (bookForm.controls['title'].touched || SubmitButton)"> Plese Enter a value</span>
+
+  </div>
+  <div class="mb-3">
+    <label for="exampleInpudescription" class="form-label">Description</label>
+    <input type="description" class="form-control" id="description" aria-describedby="description" name="description" formControlName="description">
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
