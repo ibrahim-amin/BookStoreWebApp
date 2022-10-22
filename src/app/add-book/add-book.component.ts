@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { Book } from '../model/book';
 import { BookService } from '../services/book.service';
 
@@ -10,7 +11,7 @@ import { BookService } from '../services/book.service';
 })
 export class AddBookComponent implements OnInit {
 
-  constructor(private _fb:FormBuilder, private bookService:BookService) { }
+  constructor(private _fb:FormBuilder, private bookService:BookService,private toaster:ToastrService) { }
  public bookForm:FormGroup;
  book= new Book();
  SubmitButton:boolean;
@@ -20,11 +21,17 @@ export class AddBookComponent implements OnInit {
   }
 
   CreatAddBookForm(){
-    this.bookForm = this._fb.group({
-        title: ['' , Validators.required],
-        description: ['' , Validators.required],
+    // this.bookForm = this._fb.group({
+    //     title: ['' , Validators.required],
+    //     description: ['' , Validators.required],
 
-      })
+    //   })
+
+this.bookForm = new FormGroup({
+  title: new FormControl(null,Validators.required),
+  description: new FormControl(null,Validators.required)
+})
+
     }
 
     onSubmit(){
@@ -32,10 +39,14 @@ export class AddBookComponent implements OnInit {
       if(this.bookForm.valid){
         this.BookMap();
          this.bookService.AddBook(this.book).subscribe(result=>{
-              alert(`Book Added Succesfuly ${result}`)
-            })
+             // alert(`Book Added Succesfuly ${result}`)
+             this.toaster.success(`book added succesfuly ${result}`);
+            }
+            // ,error =>{
+            //   this.bookService.handleError(error);
+            // }
 
-              console.log(this.bookForm);
+            )
          }
       else{
            alert("Please fill your form Correctlly");

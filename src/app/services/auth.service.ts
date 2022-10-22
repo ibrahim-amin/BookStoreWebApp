@@ -1,17 +1,15 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient,HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { catchError } from 'rxjs';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { HttpErrorInterceptorService } from '../Intercepator/http-error-interceptor.service';
-import { Book } from '../model/book';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BookService {
+export class AuthService {
 
   base_url=environment.baseUrl;
 constructor(private http:HttpClient,private jwtHelper: JwtHelperService,private router:Router) { }
@@ -21,10 +19,7 @@ constructor(private http:HttpClient,private jwtHelper: JwtHelperService,private 
   }
 
    if(error.status === 403) {
-    //alert('forfidden from Handler');
- this.router.navigate(["/forbidden"], { queryParams: { returnUrl: this.router.url }});
-    return "Forbidden";
-
+    return this.handleForbidden(error);
   }
 
   if (error.status === 0) {
@@ -45,16 +40,20 @@ private handleForbidden = (error: HttpErrorResponse) => {
   return "Forbidden";
 }
 
-  GetAllBooks():Observable<Book[]>{
-    return this.http.get<Book[]>(this.base_url+'/books/GetAllBooks/');
+Login(data:any):Observable<any>{
+  return this.http.post<any>(this.base_url+'/account/Login/',data);
+  // var data:any = this.http.post<any>(this.base_url+'/account/Login/',data)
+  // .pipe(
+  //   catchError(this.handleError)
+  // );
 
-  }
-  AddBook(book:Book):Observable<Book>{
-    return this.http.post<Book>(this.base_url+'/books/AddBook/',book);
-    // var data:any= this.http.post<Book>(this.base_url+'/books/AddBook/',book) .pipe(
-    //   catchError(this.handleError)
-    // );
+  // return data;
+}
 
-    //  return data;
-  }
+
+
+
+
+
+
 }
